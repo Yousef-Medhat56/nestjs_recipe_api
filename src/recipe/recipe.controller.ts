@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  ValidationPipe,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { RecipeDto } from './dto/recipe.dto';
@@ -20,8 +21,8 @@ export class RecipeController {
   }
 
   @Get('/:id')
-  async getRecipe(@Param('id', new ParseUUIDPipe()) params: { id: string }) {
-    return this.recipeService.getRecipe(params.id);
+  async getRecipe(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.recipeService.getRecipe(id);
   }
 
   @Post()
@@ -30,7 +31,7 @@ export class RecipeController {
   }
 
   @Delete('/:id')
-  async deleteRecipe(@Param('id', new ParseUUIDPipe()) params: { id: string }) {
-    return this.recipeService.deleteRecipe(params.id);
+  async deleteRecipe(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.recipeService.deleteRecipe(id);
   }
 }
