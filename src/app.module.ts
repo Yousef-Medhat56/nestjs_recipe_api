@@ -3,11 +3,12 @@ import { RecipeModule } from './recipe/recipe.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Igredient, Recipe } from './recipe/entity/recipe';
+import { validate } from './config/env.validation';
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({validate}),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST,
