@@ -1,31 +1,36 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Recipe } from './entity/recipe';
 import { RecipeDto } from './dto/recipe.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RecipeService {
-  private _recipes: Recipe[] = [];
+  constructor(
+    @InjectRepository(Recipe) private recipeRepository: Repository<Recipe>,
+  ) {}
 
   async getRecipes() {
-    return this._recipes;
+    return await this.recipeRepository.find();
   }
 
   async getRecipe(id: string) {
-    const recipe = this._recipes.find((recipe) => recipe.id === id);
-    if (!recipe) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
-
-    return recipe;
+    try {
+      const recipe = await this.recipeRepository.findOne({ where: { id } });
+      if (!recipe) {
+        throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      }
+      return recipe;
+    } catch (error) {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async createRecipe(recipe: RecipeDto) {
-    const createdRecipe = {
-      ...recipe,
-      id: Math.floor(Math.random() * 100).toString(),
-    };
-    this._recipes.push(createdRecipe);
+    await this.recipeRepository.save(recipe);
   }
 
   async deleteRecipe(id: string) {
-    this._recipes = this._recipes.filter((recipe) => recipe.id !== id);
+    await this.recipeRepository.delete({ id });
   }
 }
