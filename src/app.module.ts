@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Igredient, Recipe } from './recipe/entity/recipe';
 import { validate } from './config/env.validation';
+import { AuthModule } from './auth/auth.module';
+import { User } from './auth/entity/user';
 
 
 @Module({
@@ -16,11 +18,11 @@ import { validate } from './config/env.validation';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD as string,
       database: process.env.DATABASE_NAME,
-      entities: [Recipe,Igredient],
-      synchronize: true,
+      entities: [Recipe,Igredient,User],
       logging:true
     }),
-    RecipeModule],
+    RecipeModule,
+    AuthModule],
   controllers: [],
   providers: [],
 })

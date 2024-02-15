@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Unit } from '../dto/recipe.dto';
+import { User } from 'src/auth/entity/user';
 
 @Entity({ name: 'recipe' })
 export class Recipe {
@@ -20,6 +21,9 @@ export class Recipe {
     eager: true,
   })
   ingredients: Igredient[];
+
+  @ManyToOne(() => User, (user) => user.recipes, { onDelete: 'CASCADE' })
+  user: User;
 }
 
 @Entity({ name: 'ingredient' })
@@ -36,6 +40,8 @@ export class Igredient {
   @Column({ type: 'integer' })
   quantity: number;
 
-  @ManyToOne(() => Recipe, (recipe) => recipe.ingredients,{onDelete:"CASCADE"})
+  @ManyToOne(() => Recipe, (recipe) => recipe.ingredients, {
+    onDelete: 'CASCADE',
+  })
   recipe: Recipe;
 }
