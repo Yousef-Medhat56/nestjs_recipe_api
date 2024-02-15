@@ -3,11 +3,13 @@ import { Recipe } from './entity/recipe';
 import { RecipeDto } from './dto/recipe.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entity/user';
 
 @Injectable()
 export class RecipeService {
   constructor(
     @InjectRepository(Recipe) private recipeRepository: Repository<Recipe>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   async getRecipes() {
@@ -26,9 +28,13 @@ export class RecipeService {
     }
   }
 
-  async createRecipe(recipe: RecipeDto) {
-    await this.recipeRepository.save(recipe);
+  async createRecipe(recipeDto: RecipeDto, userEmail: string): Promise<void> {
+    const user = await this.userRepository.findOneOrFail({
+      where: { email: userEmail },
+    });
+    await this.recipeRepository.save({ ...recipeDto, user });
   }
+
 
   async deleteRecipe(id: string) {
     await this.recipeRepository.delete({ id });
