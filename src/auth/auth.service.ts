@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { User, UserRole } from './entity/user';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import InvalidCredentialsException from './exceptions/invalid-credentials.exception';
 
 export interface JWTTokens {
   accessToken: string;
@@ -41,13 +42,13 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new HttpException('Invalid credentials', 400);
+      throw new InvalidCredentialsException();
     }
 
     const validPassword = await compare(password, user.password);
 
     if (!validPassword) {
-      throw new HttpException('Invalid credentials', 400);
+      throw new InvalidCredentialsException();
     }
 
     return this.getTokens(user);
@@ -63,7 +64,7 @@ export class AuthService {
       });
       return this.getTokens(user);
     } catch (err) {
-      throw new HttpException('Invalid credentials', 400);
+      throw new InvalidCredentialsException();
     }
   }
 
