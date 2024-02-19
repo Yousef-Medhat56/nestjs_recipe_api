@@ -12,6 +12,8 @@ export class RecipeDto {
   @ValidateNested({each: true})
   @Type(()=>IgredientDto)
   ingredients: IgredientDto[];
+
+  image?: string;
 }
 
 export enum Unit {
